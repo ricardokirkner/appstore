@@ -12,7 +12,7 @@ TBD
 
 # Media Types
 
-Where applicable this API uses the *text/html* media-type to represent resources states and affordances.
+Where applicable this API uses the *text/html* media-type to represent resource states and affordances.
 
 Requests with a message-body are using *application/x-www-form-urlencoded* to set or update resource states.
 
@@ -24,30 +24,36 @@ The common [HTTP Response Status Codes](https://github.com/for-GET/know-your-htt
 # App Store API Root [/]
 App Store API entry point.
 
-This resource does not have any attributes. Instead it offers the initial API affordances in the form of JSON links.
+This resource does not have any attributes. Instead it offers the initial API affordances in the form of HTML links.
 
 ## Retrieve entry point [GET]
 
-+ Response 200 (application/json)
++ Response 200 (text/html)
 
     + Body
     
-            {
-                "links": {
-                    "self": { "rel": "self", "name": "API entry point", "href": "/"},
-                    "my-account": { "rel": "account", "name": "My Account", "href": "/accounts/123"},
-                    "top-rated": { "rel": "collection", "name": "Top rated Apps", "href": "/apps/top-rated"},
-                    "new-releases": { "rel": "collection", "name": "New releases", "href": "/apps/new-releases"},
-                    "games": { "rel": "collection", "name": "Games", "href": "/apps/games" },
-                    "featured-apps": { "rel": "collection", "name": "Featured apps", "href": "/apps/featured-apps"},
-                    "login": { "rel": "login", "name": "Sign in", "href": "/login"}
-                },
-                "items": {
-                },
-                "queries": {
-                    "search": { "rel": "search", "name": "Search", "href": "/search"}
-                }
-            }
+            <html>
+                <body>
+                    <div id="queries">
+                        <ul>
+                            <li><a rel="home" href="/" title="Home page">Home</a></li>
+                            <li><a rel="apps:featured" href="/apps/featured" title="Featured apps">Featured</a></li>
+                            <li><a rel="apps:new" href="/apps/new" title="New apps"></a>New releases</li>
+                            <li>
+                              <ul class="categories">
+                                <li><a rel="app:category" href="/apps/?category=Games" title="Games">Games</a></li>
+                                <li><a rel="app:category" href="/apps/?category=Finance title="Finance">Finance</a></li>
+                                <li><a rel="app:category" href="/apps/?category=Productivity" title="Productivity">Productivity</a></li>
+                              </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <form method="get" action="/search" class="search">
+                        <input type="text" name="q" value="" />
+                        <input type="submit" value="Search" />
+                    </form>
+                </body>
+            </html>
 
 # Group App
 App-related resources of *App Store API*
@@ -63,26 +69,20 @@ The App resource has the following attributes:
 - date_published
 - description
 - changelog
-- details
+- version
+- binary-filesize
 - icons
 - screenshots
-- rating
-- state
-- hardware_requirements
-- platform_requirements
-  - platform
-  - distributions
-  - architectures
 - tags
 - price
-- type
 
 An App has the following affordances
 
-- category
-- reviews
-- install-app
-- purchase-app
+- app:detail
+- app:category
+- author:name
+- author:website
+- author:email
 
 + Parameters
     + id (required, number, `1`) ... Numeric `id` of the App to perform action with. Has example value.
@@ -91,44 +91,45 @@ An App has the following affordances
 
     HTML representation of App resource. In addition to representing it's state using a microformat in HTML, it offers affordances in the form of the HTTP Link header and HTML links. 
     
-    + Headers
-    
-            Link: <http://api.apps.example.com/apps/42;rel="self">,<http://api.apps.example.com/apps/42/install;rel="install-app">,<http://api.apps.example.com/apps/42/purchase;rel="purchase-app">
-        
     + Body
     
             <html>
                 <body>
-                    <div itemscope="itemscope" itemtype="http://api.apps.example.com/spec/app">
-                        <div class="data">
-                            <a itemprop="name" href="/apps/42" rel="self">My App</a>
-                            <a itemprop="author" href="/apps?author=John%20Doe">John Doe</a>
-                            <span itemprop="license">GPL</span>
-                            <span itemprop="date_published">2014-01-14</span>
-                            <span itemprop="description">This is the best app evarrr.</span>
-                            <span itemprop="changelog">This is the first release.</span>
-                            <span itemprop="details">Version: 0.1</span>
-                            <ul itemprop="icons">
-                                <li><img width="64px" height="64px" href="..." /></li>
-                                <li><img width="256px" height="256px" href="..." /></li>
-                            </ul>
-                            <ul itemprop="screenshots">
-                                <li><img width="320px" height="200px" href="..." /></li>
-                                <li><img width="320px" height="200px" href="..." /></li>
-                                <li><img width="320px" height="200px" href="..." /></li>
-                            </ul>
-                            <span itemprop="rating">4.5</span>
-                            <ul itemprop="tags">
-                                <li><a href="/apps?tag=custom">custom</a></li>
-                                <li><a href="/apps?tag=tag1">tag1<a/></li>
-                                <li><a href="/apps?tag=tag2">tag2</a></li>
-                            </ul>
-                            <a itemprop="category" href="/apps?category=CatA">CatA</a>
-                        </div>
-                        <div class="actions">
-                            <a href="/apps/42/install" rel="install-app">Install</a>
-                            <a href="/apps/42/purchase" rel="purchase-app">Buy</a>
-                        </div>
+                    <div id="applications">
+                      <ul>
+                        <li class="application">
+                          <a rel="app:detail" class="name" href="/apps/1">Name</a>
+                          <a rel="author:name" href="/apps/?author=John+Doe" title="apps from same author">John Doe</a>
+
+                          <a rel="app:category" href="/apps/?category=Accessories">Accessories</a>
+                          <span class="date-published">2014-02-04</span>
+                          <span class="price">
+                            <span class="amount">0.00</span>
+                            <span class="currency">USD</span>
+                          </span>
+
+                          <span class="description">The description</span>
+                          <ul class="icons">
+                            <li><img width="256px" height="256px" src="http://www.example.com/icon256.png" /></li>
+                            <li><img width="64px" height="64px" src="http://www.example.com/icon64.png" /></li>
+                          </ul>
+                          <ul class="screenshots">
+                            <li><img width="800px" height="600px" src="http://www.example.com/screenshot-desktop.jpg" /></li>
+                            <li><img width="220px" height="400px" src="htpp://www.example.com/screenshot-mobile.jpg" /></li>
+                          </ul>
+                          <ul class="tags">
+                            <li><a href="/apps/?tag=foo">foo</a></li>
+                            <li><a href="/apps/?tag=bar">bar</a></li>
+                          </ul>
+
+                          <span class="license">GPLv3</span>
+                          <span class="changelog">A list of changes</span>
+                          <span class="binary-filesize">12345678</span>
+                          <span class="version">0.1</span>
+                          <a rel="author:website" href="http://www.example.com">Go to author website</a>
+                          <a rel="author:email" href="mailto:foo@example.com">Email author</a>
+                        </li>
+                      </ul>
                     </div>
                 </body>
             </html>
@@ -141,13 +142,7 @@ An App has the following affordances
 ## App List [/apps{?tag,category,author}]
 Collection of all Apps.
 
-The App Collection resource has the following affordances:
-
-- top-apps
-- new-apps
-- search
-
-In addition it **embeds** *App Resources* in the *App Store API*.
+This resource **embeds** a simplified representation for each *App Resource* in the *App Store API*.
 
 + Parameters
 
@@ -159,53 +154,39 @@ In addition it **embeds** *App Resources* in the *App Store API*.
 
     HTML representation of App Collection Resource. The App resources in collections are embedded. Note the embedded App resource are incomplete representations of the App in question. Use the respective App link to retrieve its full representation.
 
-    + Headers
-
-            Link: <http://api.apps.example.com/apps>;rel="self",<http://api.apps.example.com/search>;rel="search",<http://api.apps.example.com/apps/top>;rel="top-apps",<http://api.apps.example.com/apps/new>;rel="new-apps"
-
     + Body
 
             <html>
                 <body>
-                    <div itemscope="itemscope" itemtype="http://api.apps.example.com/specs/app-collection">
-                        <div class="data">
-                            <div itemscope="itemscope" itemtype="http://api.apps.example.com/spec/app">
-                                <div class="data">
-                                    <a itemprop="name" href="/apps/42" rel="self">My App</a>
-                                    <a itemprop="author" href="/apps?author=John%20Doe">John Doe</a>
-                                    <ul itemprop="icons">
-                                        <li><img width="64px" height="64px" href="..." /></li>
-                                    </ul>
-                                    <span itemprop="rating">4.5</span>
-                                </div>
-                                <div class="actions">
-                                    <a href="/apps/42/install" rel="install-app">Install</a>
-                                    <a href="/apps/42/purchase" rel="purchase-app">Buy</a>
-                                </div>
-                            </div>
-                            <div itemscope="itemscope" itemtype="http://api.apps.example.com/spec/app">
-                                <div class="data">
-                                    <a itemprop="name" href="/apps/24" rel="self">Other App</a>
-                                    <a itemprop="author" href="/apps?author=Jane%20Doe">Jane Doe</a>
-                                    <ul itemprop="icons">
-                                        <li><img width="64px" height="64px" href="..." /></li>
-                                    </ul>
-                                    <span itemprop="rating">4.6</span>
-                                </div>
-                                <div class="actions">
-                                    <a href="/apps/24/install" rel="install-app">Install</a>
-                                    <a href="/apps/24/purchase" rel="purchase-app">Buy</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="links">
-                            <a href="/apps" rel="self" />
-                            <a href="/apps/top" rel="top-apps" />
-                            <a href="/apps/new" rel="new-apps" />
-                            <form action="/search" method="GET">
-                                <input type="text" name="q" value="" />
-                            </form>
-                        </div>
+                    <div id="applications">
+                      <ul>
+                        <li class="application">
+                          <a rel="app:detail" class="name" href="/apps/1" title="app details">
+                            <span class="name">Name</span>
+                            <span class="author:name">John Doe</span>
+                            <span class="price">
+                              <span class="amount">0.00</span>
+                              <span class="currency">USD</span>
+                            </span>
+                            <ul class="icons">
+                              <li><img width="256px" height="256px" src="http://www.example.com/icon256.png" /></li>
+                            </ul>
+                          </a>
+                        </li>
+                        <li class="application">
+                          <a rel="app:detail" class="name" href="/apps/2" title="app details">
+                            <span class="name">Other</span>
+                            <span class="author:name">Jane Doe</span>
+                            <span class="price">
+                              <span class="amount">0.00</span>
+                              <span class="currency">USD</span>
+                            </span>
+                            <ul class="icons">
+                              <li><img width="256px" height="256px" src="http://www.example.com/icon256.png" /></li>
+                            </ul>
+                          </a>
+                        </li>
+                      </ul>
                     </div>
                 </body>
             </html>
@@ -214,47 +195,3 @@ In addition it **embeds** *App Resources* in the *App Store API*.
 + Response 200
 
     [App List][]
-
-## Installation [/apps/{id}/install/{account}/]
-
-+ Parameters
-    + id (required, number, `1`) ... Numeric `id` of the App to perform action with. Has example value.
-    + account (required, number, `123`) ... Numeric `id` of the Account to perform the action with. Has example value.
-
-## Purchase [/apps/{id}/purchase/{account}/]
-
-+ Parameters
-    + id (required, number, `1`) ... Numeric `id` of the App to perform action with. Has example value.
-    + account (required, number, `123`) ... Numeric `id` of the Account to perform the action with. Has example value.
-
-# Group Account
-
-## Account [/accounts/{id}]
-
-+ Parameters
-    + id (required, number, `1`) ... Numeric `id` of the Account to perform action with. Has example value.
-
-# Group Device
-
-## Device [/devices/{id}]
-
-+ Parameters
-    + id (required, number, `1`) ... Numeric `id` of the Device to perform action with. Has example value.
-
-
-## Device List [/devices{?account}]
-
-+ Parameters
-    + account (optional, number, `123`) ... Numeric `id` of the Account to perform action with. Has example value.
-
-# Group Review
-
-## Review [/reviews/{id}]
-
-+ Parameters
-    + id (required, number, `1`) ... Numeric `id` of the Review to perform action with. Has example value.
-
-## Review List [/reviews{?app}]
-
-+ Parameters
-    + app (optional, number, `1`) ... Numeric `id` of the App to perform action with. Has example value.
