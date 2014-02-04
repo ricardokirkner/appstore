@@ -29,10 +29,9 @@ For convenience it will **embed** two collections representing *new* and *featur
 
 The available affordances are:
 
-- home
-- app:detail
-- app-list
-- search
+- index [HTML4]
+- canonical [RFC6596]
+- collection [RFC6573]
 
 ## Retrieve entry point [GET]
 
@@ -44,17 +43,17 @@ The available affordances are:
                 <body>
                     <div id="links">
                         <ul>
-                            <li><a rel="home" href="/" title="Home page">Home</a></li>
+                            <li><a rel="index" href="/" title="Home page">Home</a></li>
                         </ul>
                     </div>
                     <div id="embedded">
                         <ul>
                             <li>
                                 <div class="app-list">
-                                    <a rel="app-list" name="featured" href="/apps/featured" title="Featured apps">Featured</a>
+                                    <a rel="collection" name="featured" href="/apps/featured" title="Featured apps">Featured</a>
                                     <ul>
                                         <li class="app">
-                                            <a rel="app:detail" class="name" href="/apps/1" title="app details">
+                                            <a rel="canonical" class="name" href="/apps/1" title="app details">
                                                 <span class="name">Name</span>
                                                 <span class="author:name">John Doe</span>
                                                 <span class="price">
@@ -67,7 +66,7 @@ The available affordances are:
                                             </a>
                                         </li>
                                         <li class="app">
-                                            <a rel="app:detail" class="name" href="/apps/2" title="app details">
+                                            <a rel="canonical" class="name" href="/apps/2" title="app details">
                                                 <span class="name">Other</span>
                                                 <span class="author:name">Jane Doe</span>
                                                 <span class="price">
@@ -84,10 +83,10 @@ The available affordances are:
                             </li>
                             <li>
                                 <div class="app-list">
-                                    <a rel="app-list" name="new" href="/apps/new" title="New apps">New releases</a>
+                                    <a rel="collection" name="new" href="/apps/new" title="New apps">New releases</a>
                                     <ul>
                                         <li class="app">
-                                            <a rel="app:detail" class="name" href="/apps/1" title="app details">
+                                            <a rel="canonical" class="name" href="/apps/1" title="app details">
                                                 <span class="name">Name</span>
                                                 <span class="author:name">John Doe</span>
                                                 <span class="price">
@@ -100,7 +99,7 @@ The available affordances are:
                                             </a>
                                         </li>
                                         <li class="app">
-                                            <a rel="app:detail" class="name" href="/apps/2" title="app details">
+                                            <a rel="canonical" class="name" href="/apps/2" title="app details">
                                                 <span class="name">Other</span>
                                                 <span class="author:name">Jane Doe</span>
                                                 <span class="price">
@@ -117,15 +116,15 @@ The available affordances are:
                             </li>
                             <li>Categories
                               <ul class="categories">
-                                <li><a rel="app-list" class="category" name="Games" href="/apps?category=Games" title="Games">Games</a></li>
-                                <li><a rel="app-list" class="category" name="Finance" href="/apps?category=Finance" title="Finance">Finance</a></li>
-                                <li><a rel="app-list" class="category" name="Productivity" href="/apps?category=Productivity" title="Productivity">Productivity</a></li>
+                                <li><a rel="collection" class="category" name="Games" href="/apps?category=Games" title="Games">Games</a></li>
+                                <li><a rel="collection" class="category" name="Finance" href="/apps?category=Finance" title="Finance">Finance</a></li>
+                                <li><a rel="collection" class="category" name="Productivity" href="/apps?category=Productivity" title="Productivity">Productivity</a></li>
                               </ul>
                             </li>
                         </ul>
                     </div>
                     <div id="queries">
-                        <form method="get" action="/search" rel="search">
+                        <form method="get" action="/search" name="search">
                             <input type="text" name="q" value="" />
                             <input type="submit" value="Search" />
                         </form>
@@ -156,10 +155,8 @@ The App resource has the following attributes:
 
 An App has the following affordances
 
-- app:detail
-- app-list
-- author:email
-- author:website
+- canonical [RFC6596]
+- collection [RFC6573]
 
 + Parameters
     + id (required, number, `1`) ... Numeric `id` of the App to perform action with. Has example value.
@@ -175,9 +172,9 @@ An App has the following affordances
                     <div class="app-list">
                       <ul>
                         <li class="app">
-                          <a rel="app:detail" class="name" href="/apps/1">Name</a>
-                          <a rel="app-list" class="author" href="/apps?author=John+Doe" title="apps from same author">John Doe</a>
-                          <a rel="app-list" class="category" name="Accessories" href="/apps?category=Accessories" title="Accessories">Accessories</a>
+                          <a rel="canonical" class="name" href="/apps/1">Name</a>
+                          <a rel="collection" class="author" href="/apps?author=John+Doe" title="apps from same author">John Doe</a>
+                          <a rel="collection" class="category" name="Accessories" href="/apps?category=Accessories" title="Accessories">Accessories</a>
                           <span class="date-published">2014-02-04</span>
                           <span class="price">
                             <span class="amount">0.00</span>
@@ -193,8 +190,8 @@ An App has the following affordances
                             <li><img width="220px" height="400px" src="htpp://www.example.com/screenshot-mobile.jpg" /></li>
                           </ul>
                           <ul class="tags">
-                            <li><a rel="app-list" class="tag" href="/apps?tag=foo">foo</a></li>
-                            <li><a rel="app-list" class="tag" href="/apps?tag=bar">bar</a></li>
+                            <li><a rel="collection" class="tag" href="/apps?tag=foo">foo</a></li>
+                            <li><a rel="collection" class="tag" href="/apps?tag=bar">bar</a></li>
                           </ul>
                           <span class="license">GPLv3</span>
                           <span class="changelog">A list of changes</span>
@@ -235,7 +232,7 @@ This resource **embeds** a simplified representation for each *App Resource* in 
                     <div id="app-list">
                       <ul>
                         <li class="app">
-                          <a rel="app:detail" class="name" href="/apps/1" title="app details">
+                          <a rel="canonical" class="name" href="/apps/1" title="app details">
                             <span class="name">Name</span>
                             <span class="author:name">John Doe</span>
                             <span class="price">
@@ -248,7 +245,7 @@ This resource **embeds** a simplified representation for each *App Resource* in 
                           </a>
                         </li>
                         <li class="app">
-                          <a rel="app:detail" class="name" href="/apps/2" title="app details">
+                          <a rel="canonical" class="name" href="/apps/2" title="app details">
                             <span class="name">Other</span>
                             <span class="author:name">Jane Doe</span>
                             <span class="price">
